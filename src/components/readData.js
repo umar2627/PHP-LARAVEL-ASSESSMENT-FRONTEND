@@ -16,11 +16,7 @@ export default function ReadData({
           </div>
         ) : (
           entries.map((entry, index) => (
-            <div
-              key={entry.id}
-              className="card my-2"
-              style={{ width: "18rem" }}
-            >
+            <div key={index} className="card my-2" style={{ width: "18rem" }}>
               <div className="card-body">
                 <h5 className="card-title">Name: {entry.name}</h5>
                 <h6 className="card-subtitle mb-2 text-muted">
