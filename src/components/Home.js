@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import InputFields from "./inputFields";
 import ReadData from "./readData";
 
-const url = "https://0b3c-182-191-113-132.ngrok-free.app/api";
+export const url = "http://127.0.0.1:8000/api";
 
 const Home = () => {
   const [entries, setEntries] = useState([]);
@@ -20,67 +20,66 @@ const Home = () => {
       });
 
       const data = await res.json();
-
-      if (data.status === "success") {
-        console.log(data);
-        // let todo = data.data.saveTodo;
-        // setEntries(entries.concat(todo));
-        setEntries(entries.concat(newEntry));
-      } else {
-        alert("Error adding data");
-      }
+      console.log(data);
+      setEntries(entries.concat(data));
     } catch (error) {
       alert("Error adding data");
     }
   };
 
   const onEditHandler = async (updateObject, id) => {
-    const res = await fetch(`${url}/products/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updateObject),
-    });
+    try {
+      const res = await fetch(`${url}/products/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateObject),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    let newProducts = [...entries];
+      let newProducts = [...entries];
 
-    for (let index = 0; index < newProducts.length; index++) {
-      const element = newProducts[index];
+      for (let index = 0; index < newProducts.length; index++) {
+        const element = newProducts[index];
 
-      if (element.id === id) {
-        newProducts[index].name = updateObject.name;
-        newProducts[index].description = updateObject.description;
-        newProducts[index].price = updateObject.price;
-        break;
+        if (element.id === id) {
+          newProducts[index].name = updateObject.name;
+          newProducts[index].description = updateObject.description;
+          newProducts[index].price = updateObject.price;
+          break;
+        }
       }
-    }
-
-    if (data.status === "success") {
       console.log(data);
       setEntries(newProducts);
-    } else {
+    } catch (error) {
+      console.log(error);
       alert("Error updating data");
     }
   };
 
   const onDeleteHandler = async (id) => {
-    const res = await fetch(`${url}/products/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    let newProduct = entries.filter((product) => {
-      return product.id !== id;
-    });
+    try {
+      const res = await fetch(`${url}/products/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      let newProduct = entries.filter((product) => {
+        return product.id !== id;
+      });
+      if (!res.ok) {
+        console.log(res);
+        alert("Error deleting data");
+      } else {
+        console.log(res);
+        setEntries(newProduct);
+      }
+    } catch (error) {
+      console.log(error);
 
-    if (res.ok) {
-      console.log(res);
-      setEntries(newProduct);
-    } else {
       alert("Error deleting data");
     }
   };
@@ -98,12 +97,7 @@ const Home = () => {
         },
       });
       const data = await res.json();
-      if (data.status === "success") {
-        console.log(data);
-        // setEntries(data.data.todos);
-      } else {
-        alert("Error fetching data");
-      }
+      setEntries(data);
     } catch (error) {
       alert("Error fetching data");
     }
