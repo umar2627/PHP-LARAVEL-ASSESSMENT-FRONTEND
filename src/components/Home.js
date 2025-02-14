@@ -5,15 +5,18 @@ import AddProductForm from "./addProductForm";
 const Home = () => {
   const navigate = useNavigate();
 
-  const [products, setProducts] = useState([
-    { id: 1, name: "Product 1", price: 100, description: "This is Product 1 description." },
-    { id: 2, name: "Product 2", price: 200, description: "This is Product 2 description." },
-    { id: 3, name: "Product 3", price: 300, description: "This is Product 3 description." },
-  ]);
+  const [products, setProducts] = useState([]);
+
+  const [editingProduct, setEditingProduct] = useState(null);
 
   const addProduct = (product) => {
-    const newId = products.length + 1;
-    setProducts([...products, { id: newId, ...product }]);
+    if (editingProduct) {
+      setProducts(products.map((p) => (p.id === editingProduct.id ? { ...product, id: editingProduct.id } : p)));
+      setEditingProduct(null);
+    } else {
+      const newId = products.length + 1;
+      setProducts([...products, { id: newId, ...product }]);
+    }
   };
 
   const handleProductClick = (product) => {
@@ -21,23 +24,19 @@ const Home = () => {
   };
 
   const deleteProduct = (id) => {
-    const deleteProducts = products.filter(product => product.id !== id);
-    setProducts(deleteProducts);
+    const updatedProducts = products.filter((product) => product.id !== id);
+    setProducts(updatedProducts);
   };
 
-  const [editingProduct, setEditingProduct] = useState(null);
-
   const editProduct = (product) => {
-    alert(product);
-    console.log(product);
-
-  }
+    setEditingProduct(product);
+  };
 
   return (
     <div className="plp-page">
       <h2>THIS IS PRODUCTS CRUD PAGE</h2>
 
-      <AddProductForm onAddProduct={addProduct} />
+      <AddProductForm onAddProduct={addProduct} onEditProduct={editingProduct} />
 
       <div className="product-lists">
         {products.map((product) => (
